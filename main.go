@@ -23,7 +23,7 @@ const (
 
 type Direction int8
 
-const GameRaidus int64 = 100 // 5 tiles on each side
+const GameRaidus int64 = 30 // 30 tiles on each side
 
 // left included for legacy use
 const (
@@ -32,7 +32,7 @@ const (
 )
 
 const DEBUG_MODE bool = true
-const HowSticky float64 = 0.5
+const HowSticky float64 = 0.25
 
 func main() {
 	game := new(Game)
@@ -161,9 +161,11 @@ func initRoomType(game *Game, x int64, y int64) RoomType {
 			continue
 		}
 		if adjecents[i] == START {
-			fmt.Println("\nYeet, next to start")
-			fmt.Println("Location", Location{x, y})
-			fmt.Println("Adjacents", adjecents)
+			if DEBUG_MODE {
+				fmt.Println("\nYeet, next to start")
+				fmt.Println("Location", Location{x, y})
+				fmt.Println("Adjacents", adjecents)
+			}
 			return HALLWAY
 		} else {
 			if val, ok := chances[adjecents[i]]; ok {
@@ -197,20 +199,26 @@ func initRoomType(game *Game, x int64, y int64) RoomType {
 
 	chance := 0.0
 	chanceNeeded := rand.Float64()
-	defer func() {
-		fmt.Println("Location", Location{x, y})
-		fmt.Println("Chance : ChanceNeeded ->", chance, ":", chanceNeeded)
-		fmt.Println("Chances map: Type map[RoomType]float64", chances)
-		//pause()
-	}()
+	if DEBUG_MODE {
+		defer func() {
+			fmt.Println("Location", Location{x, y})
+			fmt.Println("Chance : ChanceNeeded ->", chance, ":", chanceNeeded)
+			fmt.Println("Chances map: Type map[RoomType]float64", chances)
+			//pause()
+		}()
+	}
 	for _, val := range keys {
 		chance += chances[val]
 		if chance > chanceNeeded {
-			fmt.Println("\nYate, returning from good spot", val)
+			if DEBUG_MODE {
+				fmt.Println("\nYate, returning from good spot", val)
+			}
 			return val
 		}
 	}
-	fmt.Println("\nYoot, chance wasnt high enough")
+	if DEBUG_MODE {
+		fmt.Println("\nYoot, chance wasnt high enough")
+	}
 	return HALLWAY
 }
 
@@ -284,12 +292,12 @@ func (game *Game) calcStats() {
 		}
 	}
 	fmt.Println("=====================Stats=====================")
-	fmt.Printf("START        %5d/%-5d = %9.6f%%\n", numS, total, (float64(numS) / float64(total) * 100.0))
-	fmt.Printf("HALLWAY      %5d/%-5d = %9.6f%%\n", numH, total, (float64(numH) / float64(total) * 100.0))
-	fmt.Printf("GREAT_HALL   %5d/%-5d = %9.6f%%\n", numG, total, (float64(numG) / float64(total) * 100.0))
-	fmt.Printf("DUNGEON      %5d/%-5d = %9.6f%%\n", numD, total, (float64(numD) / float64(total) * 100.0))
-	fmt.Printf("CHEST        %5d/%-5d = %9.6f%%\n", numC, total, (float64(numC) / float64(total) * 100.0))
-	fmt.Printf("MYSTIC       %5d/%-5d = %9.6f%%\n", numM, total, (float64(numM) / float64(total) * 100.0))
+	fmt.Printf("START        %6d/%-7d = %9.6f%%\n", numS, total, (float64(numS) / float64(total) * 100.0))
+	fmt.Printf("HALLWAY      %6d/%-7d = %9.6f%%\n", numH, total, (float64(numH) / float64(total) * 100.0))
+	fmt.Printf("GREAT_HALL   %6d/%-7d = %9.6f%%\n", numG, total, (float64(numG) / float64(total) * 100.0))
+	fmt.Printf("DUNGEON      %6d/%-7d = %9.6f%%\n", numD, total, (float64(numD) / float64(total) * 100.0))
+	fmt.Printf("CHEST        %6d/%-7d = %9.6f%%\n", numC, total, (float64(numC) / float64(total) * 100.0))
+	fmt.Printf("MYSTIC       %6d/%-7d = %9.6f%%\n", numM, total, (float64(numM) / float64(total) * 100.0))
 	pause()
 }
 
