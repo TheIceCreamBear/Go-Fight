@@ -42,13 +42,6 @@ func (p *Player) printChoices() bool {
 			fmt.Println("An error occured while reading your choice in, please try again: ", err)
 			continue
 		}
-		/*
-			_, err := fmt.Scanf("%d", &choice)
-			if err != nil {
-				fmt.Println("An error occured while reading your choice in, please try again: ", err)
-				continue
-			}
-		*/
 		switch choice {
 		case 1:
 			fmt.Println("\nDebug prints. TODO")
@@ -90,13 +83,6 @@ func (p *Player) printMoveChoices() {
 			fmt.Println("An error occured while reading your choice in, please try again: ", err)
 			continue
 		}
-		/*
-			_, err := fmt.Scanf("%d", &choice)
-			if err != nil {
-				fmt.Println("An error occured while reading your choice in, please try again: ", err)
-				continue
-			}
-		*/
 
 		choice-- // due to directions being index 0 based and prints being index 1 based
 		dir := Direction(choice)
