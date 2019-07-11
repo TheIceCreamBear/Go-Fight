@@ -99,9 +99,9 @@ func (p *Player) printMoveChoices() {
 		*/
 
 		choice-- // due to directions being index 0 based and prints being index 1 based
-
-		if p.currentRoom.CanLeaveFrom(choice) {
-			switch choice {
+		dir := Direction(choice)
+		if p.currentRoom.CanLeaveFrom(dir) {
+			switch dir {
 			case UP:
 				p.loc.Add(&Location{0, -1})
 				if DEBUG_MODE {
