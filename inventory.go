@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const inventorySize = 15
+const inventorySize = 10
 
 type Inventory struct {
 	armorSlot *Item
@@ -61,16 +61,16 @@ func (inv *Inventory) printFullInventory() {
 	fmt.Println("\nPrinting Inventory:")
 	inv.printItemInventory()
 	if inv.armorSlot == nil {
-		fmt.Printf("ArmorSlot : Empty\n")
+		fmt.Printf("ArmorSlot: Empty\n")
 	} else {
-		fmt.Printf("ArmorSlot : DefenseBoost=%-9.6f", inv.armorSlot.effect)
+		fmt.Printf("ArmorSlot: DefenseBoost=%-9.6f", inv.armorSlot.effect)
 	}
 }
 
 func (inv *Inventory) printItemAt(index int) {
 	if index >= 0 && index < inventorySize {
 		current := inv.itemSlots[index]
-		fmt.Printf("ItemSlot%2d: Type=%-7s Effect=%7.3f\n", index, getStringFromItemType(current.iType), current.effect)
+		fmt.Printf("ItemSlot%1d: Type=%-7s Effect=%7.3f\n", index, getStringFromItemType(current.iType), current.effect)
 	}
 }
 
@@ -79,9 +79,9 @@ func (inv *Inventory) printItemInventory() {
 	for i := 0; i < inventorySize; i++ {
 		current := inv.itemSlots[i]
 		if current == nil {
-			fmt.Printf("ItemSlot%2d: Empty\n", i)
+			fmt.Printf("ItemSlot%1d: Empty\n", i)
 		} else {
-			fmt.Printf("ItemSlot%2d: Type=%-7s Effect=%7.3f\n", i, getStringFromItemType(current.iType), current.effect)
+			fmt.Printf("ItemSlot%1d: Type=%-7s Effect=%7.3f\n", i, getStringFromItemType(current.iType), current.effect)
 		}
 	}
 }
