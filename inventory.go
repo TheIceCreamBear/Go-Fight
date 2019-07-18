@@ -67,6 +67,13 @@ func (inv *Inventory) printFullInventory() {
 	}
 }
 
+func (inv *Inventory) printItemAt(index int) {
+	if index >= 0 && index < inventorySize {
+		current := inv.itemSlots[index]
+		fmt.Printf("ItemSlot%2d: Type=%-7s Effect=%7.3f\n", index, getStringFromItemType(current.iType), current.effect)
+	}
+}
+
 func (inv *Inventory) printItemInventory() {
 	fmt.Printf("Slots used:%2d/%-2d\n", inv.slotsUsed(), inventorySize)
 	for i := 0; i < inventorySize; i++ {
