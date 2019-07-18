@@ -57,6 +57,40 @@ func (inv *Inventory) slotsUsed() int {
 	return count
 }
 
+func (inv *Inventory) numEquipables() int {
+	count := 0
+	for i := 0; i < inventorySize; i++ {
+		current := inv.itemSlots[i]
+		if current != nil {
+			switch current.iType {
+			case ARMOR:
+				count++
+			default:
+				// do nothing
+			}
+		}
+	}
+	return count
+}
+
+func (inv *Inventory) numUseables() int {
+	count := 0
+	for i := 0; i < inventorySize; i++ {
+		current := inv.itemSlots[i]
+		if current != nil {
+			switch current.iType {
+			case HEALTH:
+				count++
+			case INSTANT_DAMAGE:
+				count++
+			default:
+				// do nothing
+			}
+		}
+	}
+	return count
+}
+
 func (inv *Inventory) printFullInventory() {
 	fmt.Println("\nPrinting Inventory:")
 	inv.printItemInventory()
