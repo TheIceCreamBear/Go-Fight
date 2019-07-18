@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"sort"
+	"strconv"
 )
 
 type Game struct {
@@ -31,10 +32,18 @@ const (
 	GameHeight int64 = GameRaidus*2 + 1
 )
 
-const DEBUG_MODE bool = true
+var DEBUG_MODE bool = true
+
 const HowSticky float64 = 0.25
 
 func main() {
+	args := os.Args[1:]
+	debugStr := args[0]
+	debugBool, err := strconv.ParseBool(debugStr)
+	if err == nil {
+		DEBUG_MODE = debugBool
+	}
+
 	game := new(Game)
 	game.initRoomTypeChances()
 	game.initDefaultRoomType()
