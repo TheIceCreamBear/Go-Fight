@@ -2,9 +2,9 @@ package main
 
 // ItemType
 const (
-	ARMOR          ItemType = iota
-	HEALTH         ItemType = iota
-	INSTANT_DAMAGE ItemType = iota
+	ARMOR          ItemType = iota // 0
+	HEALTH         ItemType = iota // 1
+	INSTANT_DAMAGE ItemType = iota // 2
 )
 
 type ItemType int8
@@ -33,7 +33,7 @@ func getStringFromItemType(iType ItemType) string {
 	case HEALTH:
 		return "Health"
 	case INSTANT_DAMAGE:
-		return "Instant Damage"
+		return "Damage" // TODO determine if name shoule be instant damage or just damage
 	default:
 		return "INVALID"
 	}
