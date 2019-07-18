@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const inventorySize = 5
+const inventorySize = 15
 
 type Inventory struct {
 	armorSlot *Item
