@@ -10,12 +10,14 @@ type Player struct {
 	movedLast   bool
 	loc         *Location
 	currentRoom *Room
+	inventory   *Inventory
 }
 
 func NewPlayer(current *Room, loc *Location) *Player {
 	p := new(Player)
 	p.currentRoom = current
 	p.loc = loc
+	p.inventory = NewInventory()
 	return p
 }
 
@@ -36,13 +38,17 @@ func (p *Player) printChoices() bool {
 		fmt.Println("\nWhat would you like to do?")
 		fmt.Println("1. Explore current room")
 		fmt.Println("2. Move to another room")
-		fmt.Println("3. Exit")
+		fmt.Println("3. View Inventory Options")
+		fmt.Println("4. Exit")
 		_, err := fmt.Scanln(&choice)
 		if err != nil {
 			fmt.Println("An error occured while reading your choice in, please try again: ", err)
 			continue
 		}
 		switch choice {
+		case -1:
+			p.doCheatLoop()
+			continue
 		case 1:
 			fmt.Println("\nDebug prints. TODO")
 			fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
@@ -53,6 +59,12 @@ func (p *Player) printChoices() bool {
 			p.printMoveChoices()
 			return true
 		case 3:
+			turnConsumed := p.printInventoryChoices()
+			if turnConsumed {
+				return true
+			}
+			continue
+		case 4:
 			return false
 		default:
 			fmt.Println("Invalid Input, try again")
@@ -124,6 +136,40 @@ func (p *Player) printMoveChoices() {
 		p.debugPrintLoc()
 	}
 	p.movedLast = true
+}
+
+func (p *Player) printInventoryChoices() (turnConsumed bool) {
+	p.inventory.printFullInventory()
+	return
+}
+
+func (p *Player) doCheatLoop() {
+	var choice int8
+	valid := false
+	for !valid {
+		_, err := fmt.Scanln(&choice)
+		if err != nil {
+			fmt.Println("An error occured while reading your choice in, please try again: ", err)
+			continue
+		}
+		switch choice {
+		case -1: // leave cheat loop
+			valid = true
+		case 1: // give item
+			effect := 0.0
+			fmt.Scanln(&choice, &effect)
+			item := NewItem(ItemType(choice), effect)
+			success := p.inventory.addItem(item)
+			if success {
+				fmt.Printf("Given item %+v\n", item)
+			} else {
+				fmt.Println("failed to give item")
+			}
+		// todo more cheat options
+		default:
+			// do nothing
+		}
+	}
 }
 
 func (p *Player) debugPrintLoc() {
