@@ -111,7 +111,7 @@ func (inv *Inventory) printFullInventory() {
 	if inv.armorSlot == nil {
 		fmt.Printf("ArmorSlot: Empty\n")
 	} else {
-		fmt.Printf("ArmorSlot: DefenseBoost=%-9.6f", inv.armorSlot.effect)
+		fmt.Printf("ArmorSlot: DefenseBoost=%-7.3f\n", inv.armorSlot.effect)
 	}
 }
 

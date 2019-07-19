@@ -139,7 +139,190 @@ func (p *Player) printMoveChoices() {
 }
 
 func (p *Player) printInventoryChoices() (turnConsumed bool) {
-	p.inventory.printFullInventory()
+	var choice int8
+	done := false
+	for !done {
+		fmt.Println("\nWhat inventory action would you like to do?")
+		fmt.Println("1. View Inventory")
+		fmt.Println("2. Use Item")
+		fmt.Println("3. Equip Item")
+		fmt.Println("4. Discard Item")
+		fmt.Println("5. Leave Inventory")
+
+		_, err := fmt.Scanln(&choice)
+		if err != nil {
+			fmt.Println("An error occured while reading your choice in, please try again: ", err)
+			continue
+		}
+
+		switch choice {
+		case -1:
+			p.doCheatLoop()
+		case 1:
+			p.inventory.printFullInventory()
+		case 2:
+			validIn := false
+			if p.inventory.slotsUsed() == 0 {
+				fmt.Println("There are no items in your inventory")
+				break
+			}
+
+			if p.inventory.numUseables() <= 0 {
+				fmt.Println("There are no useable items in your inventory")
+				break
+			}
+
+			fmt.Println("This feature is currently not implemented.\nThis option is a place holder for furture features.")
+			fmt.Println("This will be impelented when enemies are implemented.")
+			validIn = true
+			for !validIn {
+
+			}
+		case 3:
+			validIn := false
+			if p.inventory.slotsUsed() == 0 {
+				fmt.Println("There are no items in your inventory")
+				break
+			}
+
+			if p.inventory.numEquipables() <= 0 {
+				fmt.Println("There are no equipable items in your inventory")
+				break
+			}
+
+			var tempItem *Item
+
+			// TODO: when there are more than just armor equips, this will have to change
+			if p.inventory.armorSlot != nil {
+				fmt.Println("There is already an equiped ARMOR item.")
+				fmt.Println("It must be unequipped before a new ARMOR item can be equiped.")
+				fmt.Println("Would you like to unequip it?")
+				fmt.Println("  1: Yes")
+				fmt.Println("Any: No")
+				_, err := fmt.Scanln(&choice)
+				if err != nil {
+					fmt.Println("An error occured while reading your choice in, please try again: ", err)
+					break
+				}
+
+				if choice == 1 {
+					if p.inventory.isFull() {
+						tempItem = p.inventory.armorSlot
+					} else {
+						bo := p.inventory.addItem(p.inventory.armorSlot)
+						if !bo {
+							// ERROR
+							fmt.Println("THIS ALSO SHOULDNT BE POSSIBLE BUT IM CATCHING IT ANYWAY")
+							fmt.Println("inventoryChoices() case 3: unequipIetm")
+						} else {
+							p.inventory.armorSlot = nil
+						}
+					}
+				} else {
+					fmt.Println("Canceling equip process")
+					validIn = false
+				}
+			}
+
+			for !validIn {
+				fmt.Println("\nWhich item would you like to equip? (Select by number):")
+				p.inventory.printItemInventory()
+				_, err := fmt.Scanln(&choice)
+				if err != nil {
+					fmt.Println("An error occured while reading your choice in, please try again: ", err)
+					continue
+				}
+
+				if choice >= 0 && choice < inventorySize {
+					if item, ok := p.inventory.isEquipable(int(choice)); ok {
+						// not currently necessary
+						switch item.iType {
+						case ARMOR:
+							fmt.Print("Equipped item: ")
+							item.print()
+							p.inventory.armorSlot = item
+							p.inventory.itemSlots[choice] = nil
+						default:
+							fmt.Println("Impossible case: Default case from inv.isEquipable")
+							continue
+						}
+						if tempItem != nil {
+							p.inventory.itemSlots[choice] = tempItem
+						}
+						validIn = true
+						turnConsumed = true
+						done = true
+					} else {
+						fmt.Println("The selected item is not an equipable item")
+						continue
+					}
+				} else {
+					fmt.Println("Selected index does not exist.")
+					fmt.Printf("Please pick from the range 0-%-2d\n", inventorySize)
+				}
+			}
+		case 4:
+			validIn := false
+			if p.inventory.slotsUsed() == 0 {
+				fmt.Println("There are no items in your inventory")
+				validIn = true
+			}
+
+			for !validIn {
+				fmt.Println("\nWhich item would you like to discard? (Select by number):")
+				fmt.Println("Enter -1 to cancel")
+				p.inventory.printItemInventory()
+				_, err := fmt.Scanln(&choice)
+				if err != nil {
+					fmt.Println("An error occured while reading your choice in, please try again: ", err)
+					continue
+				}
+				if choice == -1 {
+					validIn = true
+					fmt.Println("Canceling Discard Process")
+					continue
+				}
+
+				index := int(choice)
+
+				if index >= 0 && index < inventorySize {
+					if p.inventory.itemSlots[index] == nil {
+						fmt.Println("There is no item in that slot")
+						continue
+					}
+					fmt.Println("You are about to discard the following item:")
+					p.inventory.printItemAt(index)
+					fmt.Println("\nDo you wish to continue?")
+					fmt.Println("  1: Yes, discard the item")
+					fmt.Println("Any: No, keep the item")
+
+					_, err := fmt.Scanln(&choice)
+					if err != nil {
+						fmt.Println("An error occured while reading your choice in, please try again: ", err)
+						continue
+					}
+
+					if choice == 1 {
+						fmt.Println("Discarded item")
+						p.inventory.itemSlots[index] = nil
+						validIn = true
+						turnConsumed = true
+						done = true
+					} else {
+						fmt.Println("Item will not be discarded")
+						validIn = true
+					}
+				} else {
+					fmt.Println("Selected index does not exist.")
+					fmt.Printf("Please pick from the range 0-%-2d\n", inventorySize)
+				}
+			}
+		case 5:
+			done = true
+		default:
+			fmt.Println("Invalid choice")
+		}
+	}
 	return
 }
 
