@@ -60,6 +60,25 @@ func (room *Room) InitDoors(u Door, d Door, l Door, r Door) {
 func getPrintStringFromRoomType(rType RoomType) string {
 	switch rType {
 	case START:
+		return "Start room"
+	case HALLWAY:
+		return "Hallway"
+	case GREAT_HALL:
+		return "Great Hall"
+	case DUNGEON:
+		return "Dungeon"
+	case CHEST:
+		return "Chest Room"
+	case MYSTIC:
+		return "Mystical"
+	default:
+		return "_"
+	}
+}
+
+func getPrintCharFromRoomType(rType RoomType) string {
+	switch rType {
+	case START:
 		return "S"
 	case HALLWAY:
 		return "H"

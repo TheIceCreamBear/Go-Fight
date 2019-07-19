@@ -273,7 +273,7 @@ func printRooms(game *Game) {
 	for y := int64(0); y < GameHeight; y++ {
 		for x := int64(0); x < GameWidth; x++ {
 			current := &game.rooms[y][x]
-			fmt.Print(getPrintStringFromRoomType(current.rType))
+			fmt.Print(getPrintCharFromRoomType(current.rType))
 		}
 		fmt.Println("")
 	}

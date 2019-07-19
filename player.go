@@ -74,9 +74,13 @@ func (p *Player) printChoices() bool {
 
 func (p *Player) printRoomOptions() {
 	fmt.Println("\nDebug prints. TODO")
-	fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
-	fmt.Println("Room Location: x=", p.currentRoom.loc.x, " y=", p.currentRoom.loc.y)
-	fmt.Println("Room Type", getPrintStringFromRoomType(p.currentRoom.rType))
+	if DEBUG_MODE {
+		fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
+		fmt.Println("Room Location: x=", p.currentRoom.loc.x, " y=", p.currentRoom.loc.y)
+	} else {
+		fmt.Printf("Location: %+v\n", *p.loc)
+	}
+	fmt.Printf("Room Type=%s\n", getPrintStringFromRoomType(p.currentRoom.rType))
 	fmt.Println("Room ID", p.currentRoom.id)
 }
 
