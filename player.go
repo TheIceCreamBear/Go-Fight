@@ -188,11 +188,47 @@ func (p *Player) printInventoryChoices() (turnConsumed bool) {
 				break
 			}
 
-			fmt.Println("This feature is currently not implemented.\nThis option is a place holder for furture features.")
-			fmt.Println("This will be impelented when enemies are implemented.")
-			validIn = true
+			/*
+				fmt.Println("This feature is currently not implemented.\nThis option is a place holder for furture features.")
+				fmt.Println("This will be impelented when enemies are implemented.")
+				validIn = true
+			*/
 			for !validIn {
+				fmt.Println("\nWhich item would you like to use? (Select by number):")
+				p.inventory.printItemInventory()
+				_, err := fmt.Scanln(&choice)
+				if err != nil {
+					fmt.Println("An error occured while reading your choice in, please try again: ", err)
+					continue
+				}
 
+				if choice >= 0 && choice < inventorySize {
+					if item, ok := p.inventory.isUseable(int(choice)); ok {
+						switch item.iType {
+						case KEY:
+							// TODO relies on rooms having chests
+							fmt.Println("Feautre will be implemented soon")
+						case HEALTH: // TODO
+							fallthrough
+						case INSTANT_DAMAGE:
+							fmt.Println("This feature is not implemented for this item type.")
+							fmt.Println("This will be impelented when enemies are implemented.")
+							continue
+						default:
+							fmt.Println("Impossible case: Default case from inv.isUseable")
+							continue
+						}
+						validIn = true
+						turnConsumed = true
+						done = true
+					} else {
+						fmt.Println("The selected item is not a useable item")
+						continue
+					}
+				} else {
+					fmt.Println("Selected index does not exist.")
+					fmt.Printf("Please pick from the range 0-%-2d\n", inventorySize)
+				}
 			}
 		case 3:
 			validIn := false
@@ -236,7 +272,7 @@ func (p *Player) printInventoryChoices() (turnConsumed bool) {
 					}
 				} else {
 					fmt.Println("Canceling equip process")
-					validIn = false
+					break
 				}
 			}
 
@@ -281,7 +317,7 @@ func (p *Player) printInventoryChoices() (turnConsumed bool) {
 			validIn := false
 			if p.inventory.slotsUsed() == 0 {
 				fmt.Println("There are no items in your inventory")
-				validIn = true
+				break
 			}
 
 			for !validIn {

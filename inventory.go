@@ -84,6 +84,8 @@ func (inv *Inventory) isUseable(index int) (*Item, bool) {
 	current := inv.itemSlots[index]
 	if current != nil {
 		switch current.iType {
+		case KEY:
+			fallthrough
 		case HEALTH:
 			fallthrough
 		case INSTANT_DAMAGE:
