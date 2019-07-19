@@ -38,10 +38,12 @@ const HowSticky float64 = 0.25
 
 func main() {
 	args := os.Args[1:]
-	debugStr := args[0]
-	debugBool, err := strconv.ParseBool(debugStr)
-	if err == nil {
-		DEBUG_MODE = debugBool
+	if len(args) > 0 {
+		debugStr := args[0]
+		debugBool, err := strconv.ParseBool(debugStr)
+		if err == nil {
+			DEBUG_MODE = debugBool
+		}
 	}
 
 	game := new(Game)
