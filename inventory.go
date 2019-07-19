@@ -57,35 +57,49 @@ func (inv *Inventory) slotsUsed() int {
 	return count
 }
 
+func (inv *Inventory) isEquipable(index int) bool {
+	current := inv.itemSlots[index]
+	if current != nil {
+		switch current.iType {
+		case ARMOR:
+			return true
+		default:
+			return false
+		}
+	}
+	return false
+}
+
 func (inv *Inventory) numEquipables() int {
 	count := 0
 	for i := 0; i < inventorySize; i++ {
-		current := inv.itemSlots[i]
-		if current != nil {
-			switch current.iType {
-			case ARMOR:
-				count++
-			default:
-				// do nothing
-			}
+		if inv.isEquipable(i) {
+			count++
 		}
 	}
 	return count
 }
 
+func (inv *Inventory) isUseable(index int) bool {
+	current := inv.itemSlots[index]
+	if current != nil {
+		switch current.iType {
+		case HEALTH:
+			fallthrough
+		case INSTANT_DAMAGE:
+			return true
+		default:
+			return false
+		}
+	}
+	return false
+}
+
 func (inv *Inventory) numUseables() int {
 	count := 0
 	for i := 0; i < inventorySize; i++ {
-		current := inv.itemSlots[i]
-		if current != nil {
-			switch current.iType {
-			case HEALTH:
-				count++
-			case INSTANT_DAMAGE:
-				count++
-			default:
-				// do nothing
-			}
+		if inv.isUseable(i) {
+			count++
 		}
 	}
 	return count
