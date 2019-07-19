@@ -137,7 +137,7 @@ func initRooms(game *Game) {
 			if DEBUG_MODE {
 				fmt.Println("Door init  ", x, y, up, down, left, right)
 			}
-			current.InitDoors(up, down, left, right)
+			current.initDoors(up, down, left, right)
 		}
 	}
 }
@@ -189,7 +189,7 @@ func initRoomType(game *Game, x int64, y int64) RoomType {
 		}
 	}
 
-	rTypes := GetGenetateableTypes()
+	rTypes := getGenetateableTypes()
 	for _, rType := range rTypes {
 		chance := 0.0
 		if val, ok := chances[rType]; ok {
@@ -264,7 +264,7 @@ func printRooms(game *Game) {
 			// fmt.Println(&current)
 			fmt.Println("Location", "x", current.loc.x, "y", current.loc.y)
 			fmt.Println("Vars", "x", x, "y", y)
-			fmt.Println("Doors-Method:", current.CanLeaveFrom(UP), current.CanLeaveFrom(LEFT), current.CanLeaveFrom(RIGHT), current.CanLeaveFrom(DOWN))
+			fmt.Println("Doors-Method:", current.canLeaveFrom(UP), current.canLeaveFrom(LEFT), current.canLeaveFrom(RIGHT), current.canLeaveFrom(DOWN))
 			fmt.Println("Doors:", current.dUp, current.dLeft, current.dRight, current.dDown)
 			fmt.Println("- - - - - - - - - - - - - - - - - - - - - - - - - - -")
 		}

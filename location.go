@@ -5,11 +5,7 @@ type Location struct {
 	y int64
 }
 
-func (l *Location) Add(other *Location) {
+func (l *Location) add(other *Location) {
 	l.x += other.x
 	l.y += other.y
-}
-
-func (l *Location) Equal(other Location) bool {
-	return l.x == other.x && l.y == other.y
 }

@@ -93,16 +93,16 @@ func (p *Player) printMoveChoices() {
 	valid := false
 	for !valid {
 		fmt.Println("\nWhere would you like to go?")
-		if p.currentRoom.CanLeaveFrom(UP) {
+		if p.currentRoom.canLeaveFrom(UP) {
 			fmt.Println("1. UP")
 		}
-		if p.currentRoom.CanLeaveFrom(DOWN) {
+		if p.currentRoom.canLeaveFrom(DOWN) {
 			fmt.Println("2. DOWN")
 		}
-		if p.currentRoom.CanLeaveFrom(LEFT) {
+		if p.currentRoom.canLeaveFrom(LEFT) {
 			fmt.Println("3. LEFT")
 		}
-		if p.currentRoom.CanLeaveFrom(RIGHT) {
+		if p.currentRoom.canLeaveFrom(RIGHT) {
 			fmt.Println("4. RIGHT")
 		}
 
@@ -114,28 +114,28 @@ func (p *Player) printMoveChoices() {
 
 		choice-- // due to directions being index 0 based and prints being index 1 based
 		dir := Direction(choice)
-		if p.currentRoom.CanLeaveFrom(dir) {
+		if p.currentRoom.canLeaveFrom(dir) {
 			switch dir {
 			case UP:
-				p.loc.Add(&Location{0, -1})
+				p.loc.add(&Location{0, -1})
 				if DEBUG_MODE {
 					fmt.Println("UP")
 				}
 				valid = true
 			case DOWN:
-				p.loc.Add(&Location{0, 1})
+				p.loc.add(&Location{0, 1})
 				if DEBUG_MODE {
 					fmt.Println("DOWN")
 				}
 				valid = true
 			case LEFT:
-				p.loc.Add(&Location{-1, 0})
+				p.loc.add(&Location{-1, 0})
 				if DEBUG_MODE {
 					fmt.Println("LEFT")
 				}
 				valid = true
 			case RIGHT:
-				p.loc.Add(&Location{1, 0})
+				p.loc.add(&Location{1, 0})
 				if DEBUG_MODE {
 					fmt.Println("RIGHT")
 				}

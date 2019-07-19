@@ -24,11 +24,11 @@ type Room struct {
 	dRight Door
 }
 
-func GetGenetateableTypes() [6]RoomType {
+func getGenetateableTypes() [6]RoomType {
 	return [6]RoomType{START, HALLWAY, GREAT_HALL, DUNGEON, CHEST, MYSTIC}
 }
 
-func (r *Room) CanLeaveFrom(direction Direction) bool {
+func (r *Room) canLeaveFrom(direction Direction) bool {
 	switch direction {
 	case UP:
 		return r.dUp.exists /* && !r.dUp.locked */
@@ -44,7 +44,7 @@ func (r *Room) CanLeaveFrom(direction Direction) bool {
 	}
 }
 
-func (room *Room) InitDoors(u Door, d Door, l Door, r Door) {
+func (room *Room) initDoors(u Door, d Door, l Door, r Door) {
 	if DEBUG_MODE {
 		fmt.Println("init doors ", room.loc.x, room.loc.y, u, d, l, r)
 	}
