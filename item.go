@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 // ItemType
 const (
 	ARMOR          ItemType = iota // 0
@@ -37,4 +39,8 @@ func getStringFromItemType(iType ItemType) string {
 	default:
 		return "INVALID"
 	}
+}
+
+func (item *Item) print() {
+	fmt.Printf("Item: Type=%-7s Effect=%7.3f\n", getStringFromItemType(item.iType), item.effect)
 }
