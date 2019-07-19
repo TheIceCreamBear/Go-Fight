@@ -39,7 +39,8 @@ func (p *Player) printChoices() bool {
 		fmt.Println("1. Explore current room")
 		fmt.Println("2. Move to another room")
 		fmt.Println("3. View Inventory Options")
-		fmt.Println("4. Exit")
+		fmt.Println("4. View Player Stats")
+		fmt.Println("5. Exit")
 		_, err := fmt.Scanln(&choice)
 		if err != nil {
 			fmt.Println("An error occured while reading your choice in, please try again: ", err)
@@ -50,10 +51,7 @@ func (p *Player) printChoices() bool {
 			p.doCheatLoop()
 			continue
 		case 1:
-			fmt.Println("\nDebug prints. TODO")
-			fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
-			fmt.Println("Room Location: x=", p.currentRoom.loc.x, " y=", p.currentRoom.loc.y)
-			fmt.Println("Room ID", p.currentRoom.id)
+			p.printRoomOptions()
 			return true
 		case 2:
 			p.printMoveChoices()
@@ -65,11 +63,25 @@ func (p *Player) printChoices() bool {
 			}
 			continue
 		case 4:
+			p.printPlayerStats()
+		case 5:
 			return false
 		default:
 			fmt.Println("Invalid Input, try again")
 		}
 	}
+}
+
+func (p *Player) printRoomOptions() {
+	fmt.Println("\nDebug prints. TODO")
+	fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
+	fmt.Println("Room Location: x=", p.currentRoom.loc.x, " y=", p.currentRoom.loc.y)
+	fmt.Println("Room Type", getPrintStringFromRoomType(p.currentRoom.rType))
+	fmt.Println("Room ID", p.currentRoom.id)
+}
+
+func (p *Player) printPlayerStats() {
+	fmt.Println("This feature is not currently implemented")
 }
 
 func (p *Player) printMoveChoices() {
