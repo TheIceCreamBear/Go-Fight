@@ -34,6 +34,7 @@ const (
 
 var DEBUG_MODE bool = true
 
+const cheatInputNumber int8 = -111
 const HowSticky float64 = 0.25
 
 func main() {

@@ -32,7 +32,7 @@ func (p *Player) update() bool {
 }
 
 func (p *Player) printChoices() bool {
-	choice := 0
+	var choice int8
 
 	for {
 		fmt.Println("\nWhat would you like to do?")
@@ -47,7 +47,7 @@ func (p *Player) printChoices() bool {
 			continue
 		}
 		switch choice {
-		case -1:
+		case cheatInputNumber:
 			p.doCheatLoop()
 			continue
 		case 1:
@@ -168,7 +168,7 @@ func (p *Player) printInventoryChoices() (turnConsumed bool) {
 		}
 
 		switch choice {
-		case -1:
+		case cheatInputNumber:
 			p.doCheatLoop()
 		case 1:
 			p.inventory.printFullInventory()
