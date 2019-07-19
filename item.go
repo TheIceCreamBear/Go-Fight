@@ -4,9 +4,10 @@ import "fmt"
 
 // ItemType
 const (
-	ARMOR          ItemType = iota // 0
-	HEALTH         ItemType = iota // 1
-	INSTANT_DAMAGE ItemType = iota // 2
+	KEY            ItemType = iota // 0 // NOTE: the effect for a key is how many chests it can open
+	ARMOR          ItemType = iota // 1
+	HEALTH         ItemType = iota // 2
+	INSTANT_DAMAGE ItemType = iota // 3
 )
 
 type ItemType int8
@@ -30,6 +31,8 @@ func NewItem(iType ItemType, effect float64) *Item {
 
 func getStringFromItemType(iType ItemType) string {
 	switch iType {
+	case KEY:
+		return "Key"
 	case ARMOR:
 		return "Armor"
 	case HEALTH:
