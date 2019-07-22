@@ -282,34 +282,36 @@ func printRooms(game *Game) {
 
 func (game *Game) calcStats() {
 	total := GameWidth * GameHeight
-	numS, numH, numG, numD, numC, numM := 0, 0, 0, 0, 0, 0
+	s, h, g, d, c, m := 0, 0, 0, 0, 0, 0
 	for y := int64(0); y < GameHeight; y++ {
 		for x := int64(0); x < GameWidth; x++ {
 			current := &game.rooms[y][x]
+			
 			switch current.rType {
 			case START:
-				numS++
+				s++
 			case HALLWAY:
-				numH++
+				h++
 			case GREAT_HALL:
-				numG++
+				g++
 			case DUNGEON:
-				numD++
+				d++
 			case CHEST:
-				numC++
+				c++
 			case MYSTIC:
-				numM++
+				m++
 			default:
 			}
 		}
 	}
 	fmt.Println("=====================Stats=====================")
-	fmt.Printf("START        %6d/%-7d = %9.6f%%\n", numS, total, (float64(numS) / float64(total) * 100.0))
-	fmt.Printf("HALLWAY      %6d/%-7d = %9.6f%%\n", numH, total, (float64(numH) / float64(total) * 100.0))
-	fmt.Printf("GREAT_HALL   %6d/%-7d = %9.6f%%\n", numG, total, (float64(numG) / float64(total) * 100.0))
-	fmt.Printf("DUNGEON      %6d/%-7d = %9.6f%%\n", numD, total, (float64(numD) / float64(total) * 100.0))
-	fmt.Printf("CHEST        %6d/%-7d = %9.6f%%\n", numC, total, (float64(numC) / float64(total) * 100.0))
-	fmt.Printf("MYSTIC       %6d/%-7d = %9.6f%%\n", numM, total, (float64(numM) / float64(total) * 100.0))
+	fmt.Printf("START        %6d/%-7d = %9.6f%%\n", s, total, (float64(s) / float64(total) * 100.0))
+	fmt.Printf("HALLWAY      %6d/%-7d = %9.6f%%\n", h, total, (float64(h) / float64(total) * 100.0))
+	fmt.Printf("GREAT_HALL   %6d/%-7d = %9.6f%%\n", g, total, (float64(g) / float64(total) * 100.0))
+	fmt.Printf("DUNGEON      %6d/%-7d = %9.6f%%\n", d, total, (float64(d) / float64(total) * 100.0))
+	fmt.Printf("CHEST        %6d/%-7d = %9.6f%%\n", c, total, (float64(c) / float64(total) * 100.0))
+	fmt.Printf("MYSTIC       %6d/%-7d = %9.6f%%\n", m, total, (float64(m) / float64(total) * 100.0))
+	fmt.Println("======================END======================")
 	pause()
 }
 
