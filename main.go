@@ -32,7 +32,7 @@ const (
 	GameHeight int64 = GameRaidus*2 + 1
 )
 
-var DEBUG_MODE bool = true
+var DEBUG_MODE = false
 
 const cheatInputNumber int8 = -111
 const HowSticky float64 = 0.25
