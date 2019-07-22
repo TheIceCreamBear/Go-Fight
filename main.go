@@ -51,12 +51,12 @@ func main() {
 	game.initRoomTypeChances()
 	game.initDefaultRoomType()
 	game.initRooms()
+	game.initRoomChests()
 	game.calcStats()
 	if DEBUG_MODE {
 		printRooms(game)
 	}
 
-	// Temp for 11x11
 	var playerStartX = GameRaidus
 	var playerStartY = GameRaidus
 
@@ -234,6 +234,15 @@ func initRoomType(game *Game, x int64, y int64) RoomType {
 	return HALLWAY
 }
 
+func (game *Game) initRoomChests() {
+	for y := int64(0); y < GameHeight; y++ {
+		for x := int64(0); x < GameWidth; x++ {
+			current := &game.rooms[y][x]
+			current.initChests()
+		}
+	}
+}
+
 func (game *Game) initRoomTypeChances() {
 	game.chances = make(map[RoomType]float64, MYSTIC+1)
 	game.chances[START] = 0
@@ -283,10 +292,89 @@ func printRooms(game *Game) {
 func (game *Game) calcStats() {
 	total := GameWidth * GameHeight
 	s, h, g, d, c, m := 0, 0, 0, 0, 0, 0
+	chests, lChests := 0, 0
+	rWch, rTot := 0, 0
+	// items, each new time on new line, each diff effective type new var
+	itemTotal := 0
+	k1, k2, k3, kT := 0, 0, 0, 0
+	a1, a2, a3, a4, aT := 0, 0, 0, 0, 0
+	h1, h2, h3, h4, hT := 0, 0, 0, 0, 0
+	d1, d2, d3, d4, dT := 0, 0, 0, 0, 0
 	for y := int64(0); y < GameHeight; y++ {
 		for x := int64(0); x < GameWidth; x++ {
 			current := &game.rooms[y][x]
-			
+
+			rTot++
+			currentNumChests := current.getNumChests()
+			if currentNumChests > 0 {
+				rWch++
+				chests += currentNumChests
+				for _, chest := range current.chests {
+					if chest == nil {
+						continue
+					}
+					if chest.locked {
+						lChests++
+					}
+					item := chest.item
+					if item != nil {
+						itemTotal++
+						switch item.iType {
+						case KEY:
+							kT++
+							switch item.effect {
+							case 1:
+								k1++
+							case 2:
+								k2++
+							case 3:
+								k3++
+							default:
+							}
+						case ARMOR:
+							aT++
+							switch item.effect {
+							case 1:
+								a1++
+							case 2:
+								a2++
+							case 3:
+								a3++
+							case 4:
+								a4++
+							default:
+							}
+						case HEALTH:
+							hT++
+							switch item.effect {
+							case 20:
+								h1++
+							case 50:
+								h2++
+							case 100:
+								h3++
+							case 200:
+								h4++
+							default:
+							}
+						case INSTANT_DAMAGE:
+							dT++
+							switch item.effect {
+							case 20:
+								d1++
+							case 50:
+								d2++
+							case 100:
+								d3++
+							case 200:
+								d4++
+							default:
+							}
+						default:
+						}
+					}
+				}
+			}
 			switch current.rType {
 			case START:
 				s++
@@ -305,12 +393,40 @@ func (game *Game) calcStats() {
 		}
 	}
 	fmt.Println("=====================Stats=====================")
+	fmt.Println("---------------------RTYPE---------------------")
 	fmt.Printf("START        %6d/%-7d = %9.6f%%\n", s, total, (float64(s) / float64(total) * 100.0))
 	fmt.Printf("HALLWAY      %6d/%-7d = %9.6f%%\n", h, total, (float64(h) / float64(total) * 100.0))
 	fmt.Printf("GREAT_HALL   %6d/%-7d = %9.6f%%\n", g, total, (float64(g) / float64(total) * 100.0))
 	fmt.Printf("DUNGEON      %6d/%-7d = %9.6f%%\n", d, total, (float64(d) / float64(total) * 100.0))
 	fmt.Printf("CHEST        %6d/%-7d = %9.6f%%\n", c, total, (float64(c) / float64(total) * 100.0))
 	fmt.Printf("MYSTIC       %6d/%-7d = %9.6f%%\n", m, total, (float64(m) / float64(total) * 100.0))
+	fmt.Println("---------------------CHEST---------------------")
+	fmt.Printf("RWC/RTot     %6d/%-7d = %9.6f%%\n", rWch, rTot, (float64(rWch) / float64(rTot) * 100.0))
+	fmt.Printf("Locked/Total %6d/%-7d = %9.6f%%\n", lChests, chests, (float64(lChests) / float64(chests) * 100.0))
+	fmt.Println("---------------------ITEMS---------------------")
+	fmt.Printf("KEY          %6d/%-7d = %9.6f%%\n", kT, itemTotal, (float64(kT) / float64(itemTotal) * 100.0))
+	fmt.Printf("ARMOR        %6d/%-7d = %9.6f%%\n", aT, itemTotal, (float64(aT) / float64(itemTotal) * 100.0))
+	fmt.Printf("HEALTH       %6d/%-7d = %9.6f%%\n", hT, itemTotal, (float64(hT) / float64(itemTotal) * 100.0))
+	fmt.Printf("DAMAGE       %6d/%-7d = %9.6f%%\n", dT, itemTotal, (float64(dT) / float64(itemTotal) * 100.0))
+	fmt.Println("----------------------KEY----------------------")
+	fmt.Printf("KEY 1        %6d/%-7d = %9.6f%%\n", k1, kT, (float64(k1) / float64(kT) * 100.0))
+	fmt.Printf("KEY 2        %6d/%-7d = %9.6f%%\n", k2, kT, (float64(k2) / float64(kT) * 100.0))
+	fmt.Printf("KEY 3        %6d/%-7d = %9.6f%%\n", k3, kT, (float64(k3) / float64(kT) * 100.0))
+	fmt.Println("---------------------ARMOR---------------------")
+	fmt.Printf("ARMOR 1      %6d/%-7d = %9.6f%%\n", a1, aT, (float64(a1) / float64(aT) * 100.0))
+	fmt.Printf("ARMOR 2      %6d/%-7d = %9.6f%%\n", a2, aT, (float64(a2) / float64(aT) * 100.0))
+	fmt.Printf("ARMOR 3      %6d/%-7d = %9.6f%%\n", a3, aT, (float64(a3) / float64(aT) * 100.0))
+	fmt.Printf("ARMOR 4      %6d/%-7d = %9.6f%%\n", a4, aT, (float64(a4) / float64(aT) * 100.0))
+	fmt.Println("---------------------HEALTH--------------------")
+	fmt.Printf("HEALTH 1     %6d/%-7d = %9.6f%%\n", h1, hT, (float64(h1) / float64(hT) * 100.0))
+	fmt.Printf("HEALTH 2     %6d/%-7d = %9.6f%%\n", h2, hT, (float64(h2) / float64(hT) * 100.0))
+	fmt.Printf("HEALTH 3     %6d/%-7d = %9.6f%%\n", h3, hT, (float64(h3) / float64(hT) * 100.0))
+	fmt.Printf("HEALTH 4     %6d/%-7d = %9.6f%%\n", h4, hT, (float64(h4) / float64(hT) * 100.0))
+	fmt.Println("---------------------DAMAGE--------------------")
+	fmt.Printf("DAMAGE 1     %6d/%-7d = %9.6f%%\n", d1, dT, (float64(d1) / float64(dT) * 100.0))
+	fmt.Printf("DAMAGE 2     %6d/%-7d = %9.6f%%\n", d2, dT, (float64(d2) / float64(dT) * 100.0))
+	fmt.Printf("DAMAGE 3     %6d/%-7d = %9.6f%%\n", d3, dT, (float64(d3) / float64(dT) * 100.0))
+	fmt.Printf("DAMAGE 4     %6d/%-7d = %9.6f%%\n", d4, dT, (float64(d4) / float64(dT) * 100.0))
 	fmt.Println("======================END======================")
 	pause()
 }
