@@ -50,7 +50,7 @@ func main() {
 	game := new(Game)
 	game.initRoomTypeChances()
 	game.initDefaultRoomType()
-	initRooms(game)
+	game.initRooms()
 	game.calcStats()
 	if DEBUG_MODE {
 		printRooms(game)
@@ -73,7 +73,7 @@ func main() {
 	}
 }
 
-func initRooms(game *Game) {
+func (game *Game) initRooms() {
 	roomID := int64(0)
 	// rng room generation spiraling out from the center
 	game.rooms[GameRaidus][GameRaidus].rType = START
