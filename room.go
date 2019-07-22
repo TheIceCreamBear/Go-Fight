@@ -44,16 +44,16 @@ func (r *Room) canLeaveFrom(direction Direction) bool {
 	}
 }
 
-func (room *Room) initDoors(u Door, d Door, l Door, r Door) {
+func (r *Room) initDoors(up Door, do Door, le Door, ri Door) {
 	if DEBUG_MODE {
-		fmt.Println("init doors ", room.loc.x, room.loc.y, u, d, l, r)
+		fmt.Println("init doors ", r.loc.x, r.loc.y, up, do, le, ri)
 	}
-	room.dUp = Door{u.exists, u.locked}
-	room.dDown = Door{d.exists, d.locked}
-	room.dLeft = Door{l.exists, l.locked}
-	room.dRight = Door{r.exists, r.locked}
+	r.dUp = Door{up.exists, up.locked}
+	r.dDown = Door{do.exists, do.locked}
+	r.dLeft = Door{le.exists, le.locked}
+	r.dRight = Door{ri.exists, ri.locked}
 	if DEBUG_MODE {
-		fmt.Println("post init doors", room.dUp, room.dDown, room.dLeft, room.dRight)
+		fmt.Println("post init doors", r.dUp, r.dDown, r.dLeft, r.dRight)
 	}
 }
 

@@ -20,6 +20,17 @@ type Item struct {
 
 var itemIDCounter int64
 
+func getGenetateableItemsWithChance() (chances map[ItemType]float64) {
+	chances = make(map[ItemType]float64, INSTANT_DAMAGE+1)
+	chances[KEY] = 0.4
+	chances[ARMOR] = 0.1
+	chances[HEALTH] = 0.2
+	chances[INSTANT_DAMAGE] = 0.1
+	// chances[No Item Chance] = 0.2
+	// NOTE: TOTAL CHANCES DO NOT HAVE TO EQUAL 1
+	return
+}
+
 func NewItem(iType ItemType, effect float64) *Item {
 	item := new(Item)
 	item.id = itemIDCounter
