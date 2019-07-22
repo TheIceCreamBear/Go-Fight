@@ -25,7 +25,7 @@ var itemIDCounter int64
 
 func getGenetateableItemsWithChance() (chances map[ItemType]float64) {
 	chances = make(map[ItemType]float64, INSTANT_DAMAGE+1)
-	chances[KEY] = 0.45
+	chances[KEY] = 0.45 // THIS MUST REMAIN ABOVE OR EQUAL TO chestLockedChance SO ALL CHESTS CAN BE OPENED
 	chances[ARMOR] = 0.15
 	chances[HEALTH] = 0.25
 	chances[INSTANT_DAMAGE] = 0.15
