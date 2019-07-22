@@ -151,7 +151,7 @@ func (r *Room) getNumChestsWithItem() int {
 func getPrintStringFromRoomType(rType RoomType) string {
 	switch rType {
 	case START:
-		return "Start room"
+		return "Start Room"
 	case HALLWAY:
 		return "Hallway"
 	case GREAT_HALL:
@@ -161,7 +161,7 @@ func getPrintStringFromRoomType(rType RoomType) string {
 	case CHEST:
 		return "Chest Room"
 	case MYSTIC:
-		return "Mystical"
+		return "Mystical Room"
 	default:
 		return "_"
 	}
