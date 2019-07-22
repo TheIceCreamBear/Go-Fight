@@ -73,15 +73,13 @@ func (p *Player) printChoices() bool {
 }
 
 func (p *Player) printRoomOptions() {
-	fmt.Println("\nDebug prints. TODO")
 	if DEBUG_MODE {
+		fmt.Println("\nDebug prints.")
 		fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
 		fmt.Println("Room Location: x=", p.currentRoom.loc.x, " y=", p.currentRoom.loc.y)
-	} else {
-		fmt.Printf("Location: %+v\n", *p.loc)
+		fmt.Printf("Room Type=%s\n", getPrintStringFromRoomType(p.currentRoom.rType))
+		fmt.Println("Room ID", p.currentRoom.id)
 	}
-	fmt.Printf("Room Type=%s\n", getPrintStringFromRoomType(p.currentRoom.rType))
-	fmt.Println("Room ID", p.currentRoom.id)
 }
 
 func (p *Player) printPlayerStats() {
@@ -188,11 +186,6 @@ func (p *Player) printInventoryChoices() (turnConsumed bool) {
 				break
 			}
 
-			/*
-				fmt.Println("This feature is currently not implemented.\nThis option is a place holder for furture features.")
-				fmt.Println("This will be impelented when enemies are implemented.")
-				validIn = true
-			*/
 			for !validIn {
 				fmt.Println("\nWhich item would you like to use? (Select by number):")
 				p.inventory.printItemInventory()
