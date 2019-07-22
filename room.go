@@ -148,6 +148,18 @@ func (r *Room) getNumChestsWithItem() int {
 	return numChests
 }
 
+func (r *Room) getNumLockedChests() int {
+	numChests := 0
+	for _, val := range r.chests {
+		if val != nil {
+			if val.locked {
+				numChests++
+			}
+		}
+	}
+	return numChests
+}
+
 func (r *Room) getNumLootableChests() int {
 	numChests := 0
 	for _, val := range r.chests {
