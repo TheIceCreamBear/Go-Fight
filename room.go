@@ -148,6 +148,20 @@ func (r *Room) getNumChestsWithItem() int {
 	return numChests
 }
 
+func (r *Room) getNumLootableChests() int {
+	numChests := 0
+	for _, val := range r.chests {
+		if val != nil {
+			if !val.locked {
+				if val.item != nil {
+					numChests++
+				}
+			}
+		}
+	}
+	return numChests
+}
+
 func getPrintStringFromRoomType(rType RoomType) string {
 	switch rType {
 	case START:
