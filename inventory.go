@@ -57,6 +57,16 @@ func (inv *Inventory) slotsUsed() int {
 	return count
 }
 
+func (inv *Inventory) slotsNotUsed() int {
+	count := 0
+	for i := 0; i < inventorySize; i++ {
+		if inv.itemSlots[i] == nil {
+			count++
+		}
+	}
+	return count
+}
+
 func (inv *Inventory) isEquipable(index int) (*Item, bool) {
 	current := inv.itemSlots[index]
 	if current != nil {
