@@ -75,15 +75,104 @@ func (p *Player) printChoices() bool {
 func (p *Player) printRoomOptions() {
 	if DEBUG_MODE {
 		fmt.Println("\nDebug prints.")
-		fmt.Println("Player Location: x=", p.loc.x, " y=", p.loc.y)
-		fmt.Println("Room Location: x=", p.currentRoom.loc.x, " y=", p.currentRoom.loc.y)
+		fmt.Printf("Player Location: %+v", *p.loc)
+		fmt.Printf("Room Location: %+v", p.currentRoom.loc)
 		fmt.Printf("Room Type=%s\n", getPrintStringFromRoomType(p.currentRoom.rType))
 		fmt.Println("Room ID", p.currentRoom.id)
+	}
+
+	fmt.Printf("\nYou are in a %s, located at %+v\n", getPrintStringFromRoomType(p.currentRoom.rType), *p.loc)
+	totalChests := p.currentRoom.getNumChests()
+	numUnlockedChest := p.currentRoom.getNumLootableChests()
+	numLockedChests := p.currentRoom.getNumLockedChests()
+
+	if numLockedChests+numUnlockedChest == 0 {
+		fmt.Println("All chests in this room have been looted.")
+		return
+	}
+	if totalChests == 0 {
+		fmt.Println("There are no chests in this room.")
+		return
+	} else if totalChests == 1 {
+		if numLockedChests == totalChests {
+			fmt.Println("There is 1 locked chest and no unlocked chests in the room")
+			fmt.Println("To unlock the chest, use a key from the inventory menu")
+			return
+		} else if numUnlockedChest == totalChests {
+			fmt.Println("There are no locked chests and 1 unlocked chest in the room")
+			fmt.Println("Would you like to loot it?")
+		}
+	} else { // totalChests > 1
+		if numLockedChests == totalChests {
+			fmt.Println("There are", numLockedChests, "locked chests and no unlocked chests in the room")
+			fmt.Println("To unlock the chests, use a key or keys from the inventory menu")
+			return
+		} else if numLockedChests == 0 {
+			fmt.Println("There are no locked chests and", numUnlockedChest, "unlocked chests in the room")
+			fmt.Println("Would you like to loot them all?")
+		} else { // one or more for both
+			if numLockedChests == 1 {
+				fmt.Println("There is 1 locked chest and", numUnlockedChest, "unlocked chests in the room")
+				fmt.Println("To unlock the locked chest, use a key from the inventory menu")
+				fmt.Println("Would you like to loot all the unlocked chests?")
+			} else if numUnlockedChest == 1 {
+				fmt.Println("There are", numLockedChests, "locked chests and 1 unlocked chest in the room")
+				fmt.Println("To unlock the locked chests, use a key from the inventory menu")
+				fmt.Println("Would you like to loot the unlocked chest?")
+			} else {
+				fmt.Println("There are", numLockedChests, "locked chests and", numUnlockedChest, "unlocked chests in the room")
+				fmt.Println("To unlock the locked chests, use a key from the inventory menu")
+				fmt.Println("Would you like to loot all the unlocked chests?")
+			}
+		}
+	}
+	var choice int8
+	fmt.Println("  1: Yes")
+	fmt.Println("Any: No")
+	_, err := fmt.Scanln(&choice)
+	if err != nil {
+		fmt.Println("An error occured while reading your choice in, please try again: ", err)
+	}
+	if choice == 1 {
+		if p.inventory.isFull() {
+			if numUnlockedChest == 1 {
+				fmt.Println("Your inventory is full.\nTo loot the chest in this room, discard an item to free up space")
+			} else {
+				fmt.Println("Your inventory is full.\nTo loot the chests in this room, discard an item to free up space")
+			}
+			return
+		} else if numUnlockedChest > p.inventory.slotsNotUsed() {
+			fmt.Println("There are more chests than your inventoy has space for.")
+			fmt.Println("Only some chests will be looted. To loot them all, discard items to free inventory space")
+		}
+		count := 0
+		for _, chest := range p.currentRoom.chests {
+			if chest == nil {
+				continue
+			}
+			if chest.locked {
+				continue
+			}
+			if p.inventory.addItem(chest.item) {
+				chest.item = nil
+				count++
+			}
+			if p.inventory.isFull() {
+				break
+			}
+		}
+		if count == 1 {
+			fmt.Println("Looted 1 chest")
+		} else {
+			fmt.Println("Looted", count, "chests")
+		}
+	} else {
+		fmt.Println("You can come back to loot the chests at any time")
 	}
 }
 
 func (p *Player) printPlayerStats() {
-	fmt.Println("This feature is not currently implemented")
+	fmt.Println("This feature is not currently implemented", "Plyr stats")
 }
 
 func (p *Player) printMoveChoices() {
@@ -199,8 +288,25 @@ func (p *Player) printInventoryChoices() (turnConsumed bool) {
 					if item, ok := p.inventory.isUseable(int(choice)); ok {
 						switch item.iType {
 						case KEY:
-							// TODO relies on rooms having chests
-							fmt.Println("Feautre will be implemented soon")
+							numLocked := p.currentRoom.getNumLockedChests()
+							if numLocked > 0 {
+								if item.effect > float64(numLocked) {
+									fmt.Println("Unlocking all chests")
+									item.effect -= float64(numLocked)
+									p.currentRoom.unlockChests(numLocked)
+									fmt.Printf("This key can unlcok %3.1f more locked chests", item.effect)
+									if item.effect > 1 {
+										fmt.Print("s")
+									}
+									fmt.Println()
+								} else {
+
+								}
+							} else {
+								fmt.Println("There are no locked chests in this room, this item cannot be used.")
+								validIn = true
+								// valid input, but kick them back to the inventory choices list
+							}
 						case HEALTH: // TODO
 							fallthrough
 						case INSTANT_DAMAGE:
