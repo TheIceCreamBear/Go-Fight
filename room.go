@@ -24,6 +24,11 @@ const (
 	threeChest float64 = 0.05
 )
 
+type Door struct {
+	exists bool
+	locked bool
+}
+
 type Chest struct {
 	locked bool
 	item   *Item
