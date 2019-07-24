@@ -71,18 +71,71 @@ func (r *Room) initChests() {
 	r.chests = make([]*Chest, 3)
 	var numChests int
 	chanceNeeded := rand.Float64()
-	switch {
-	case noChest > chanceNeeded:
+	switch r.rType {
+	case START:
 		return // numChests is 0
-	case noChest+oneChest > chanceNeeded:
-		numChests = 1
-	case noChest+oneChest+twoChest > chanceNeeded:
-		numChests = 2
-	case noChest+oneChest+twoChest+threeChest > chanceNeeded:
-		numChests = 3
-	default:
-		fmt.Println("Bad chance, check room.initChests")
+	case HALLWAY:
+		switch {
+		case .85 > chanceNeeded:
+			return // numChests is 0
+		case .85+.15 > chanceNeeded:
+			numChests = 1
+		}
+	case GREAT_HALL:
+		switch {
+		case .65 > chanceNeeded:
+			return // numChests is 0
+		case .65+.3 > chanceNeeded:
+			numChests = 1
+		case .65+.3+.05 > chanceNeeded:
+			numChests = 2
+		}
+	case DUNGEON:
+		switch {
+		case .5 > chanceNeeded:
+			return // numChests is 0
+		case .5+.3 > chanceNeeded:
+			numChests = 1
+		case .5+.3+.075 > chanceNeeded:
+			numChests = 2
+		}
+	case CHEST:
+		switch {
+		case .0 > chanceNeeded:
+			return // numChests is 0
+		case .0+.25 > chanceNeeded:
+			numChests = 1
+		case .0+.25+.5 > chanceNeeded:
+			numChests = 2
+		case .0+.25+.5+.25 > chanceNeeded:
+			numChests = 3
+		}
+	case MYSTIC:
+		switch {
+		case .05 > chanceNeeded:
+			return // numChests is 0
+		case .05+.35 > chanceNeeded:
+			numChests = 1
+		case .05+.35+.45 > chanceNeeded:
+			numChests = 2
+		case .05+.35+.45+.15 > chanceNeeded:
+			numChests = 3
+		}
 	}
+	/*
+		switch {
+		case noChest > chanceNeeded:
+			return // numChests is 0
+		case noChest+oneChest > chanceNeeded:
+			numChests = 1
+		case noChest+oneChest+twoChest > chanceNeeded:
+			numChests = 2
+		case noChest+oneChest+twoChest+threeChest > chanceNeeded:
+			numChests = 3
+		default:
+			fmt.Println("Bad chance, check room.initChests")
+		}
+	*/
 
 	for i := 0; i < numChests; i++ {
 		chest := new(Chest)
