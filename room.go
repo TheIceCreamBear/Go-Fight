@@ -122,20 +122,6 @@ func (r *Room) initChests() {
 			numChests = 3
 		}
 	}
-	/*
-		switch {
-		case noChest > chanceNeeded:
-			return // numChests is 0
-		case noChest+oneChest > chanceNeeded:
-			numChests = 1
-		case noChest+oneChest+twoChest > chanceNeeded:
-			numChests = 2
-		case noChest+oneChest+twoChest+threeChest > chanceNeeded:
-			numChests = 3
-		default:
-			fmt.Println("Bad chance, check room.initChests")
-		}
-	*/
 
 	for i := 0; i < numChests; i++ {
 		chest := new(Chest)

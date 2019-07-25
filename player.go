@@ -86,7 +86,7 @@ func (p *Player) printRoomOptions() {
 	numUnlockedChest := p.currentRoom.getNumLootableChests()
 	numLockedChests := p.currentRoom.getNumLockedChests()
 
-	if numLockedChests+numUnlockedChest == 0 {
+	if numLockedChests+numUnlockedChest == 0 && totalChests != 0 {
 		fmt.Println("All chests in this room have been looted.")
 		return
 	}
