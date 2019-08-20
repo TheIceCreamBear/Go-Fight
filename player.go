@@ -3,7 +3,9 @@ package main
 import "fmt"
 
 const (
-	BASE_PLAYER_HEALTH = 100
+	BasePlayerHealth   = 100.0
+	BasePlayerStrength = 1.0
+	BasePlayerDefense  = 1.0
 )
 
 type Player struct {
@@ -11,6 +13,9 @@ type Player struct {
 	loc         *Location
 	currentRoom *Room
 	inventory   *Inventory
+	health      float64
+	defense     float64 // enemyDamage = 1 / defense
+	strength    float64 // playerDamage = (min + rand.Int64N(max - min)) * strength
 }
 
 func NewPlayer(current *Room, loc *Location) *Player {
@@ -18,6 +23,9 @@ func NewPlayer(current *Room, loc *Location) *Player {
 	p.currentRoom = current
 	p.loc = loc
 	p.inventory = NewInventory()
+	p.health = BasePlayerHealth
+	p.defense = 1.0
+	p.strength = 1.0
 	return p
 }
 
@@ -173,6 +181,10 @@ func (p *Player) printRoomOptions() {
 
 func (p *Player) printPlayerStats() {
 	fmt.Println("This feature is not currently implemented", "Plyr stats")
+	fmt.Println("\nPlayer Stats:")
+	fmt.Println("Health   =", p.health)
+	fmt.Println("Defense  =", p.defense)
+	fmt.Println("Strength =", p.strength)
 }
 
 func (p *Player) printMoveChoices() {
