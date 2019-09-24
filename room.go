@@ -37,14 +37,15 @@ type Chest struct {
 type RoomType int8
 
 type Room struct {
-	rType  RoomType
-	id     int64
-	loc    Location
-	chests []*Chest
-	dUp    Door
-	dDown  Door
-	dLeft  Door
-	dRight Door
+	rType   RoomType
+	id      int64
+	loc     Location
+	chests  []*Chest
+	enemies []*Enemy
+	dUp     Door
+	dDown   Door
+	dLeft   Door
+	dRight  Door
 }
 
 func getGenetateableTypes() [6]RoomType {
@@ -157,6 +158,83 @@ func (r *Room) initChests() {
 	}
 }
 
+func (r *Room) initEnemies(x, y, raid int64) {
+	if r.rType == DUNGEON || r.rType == MYSTIC {
+		r.enemies = make([]*Enemy, 2)
+	} else {
+		r.enemies = make([]*Enemy, 1)
+	}
+	chanceNeeded := rand.Float64()
+
+	// NOTE: Any chance that is greater than one is assuming that the radius is large enough to
+	switch r.rType {
+	case START:
+		// impossible case but...
+		return
+	case HALLWAY:
+		switch {
+		case .7 > chanceNeeded:
+			return
+		case .7+.25 > chanceNeeded:
+			r.enemies[0] = NewEnemy(PEON)
+		case .7+.25+.05 > chanceNeeded:
+			r.enemies[0] = NewEnemy(NORMAL)
+		}
+	case GREAT_HALL:
+		switch {
+		case .6 > chanceNeeded:
+			return
+		case .6+.1 > chanceNeeded:
+			r.enemies[0] = NewEnemy(PEON)
+		case .6+.1+.3 > chanceNeeded:
+			r.enemies[0] = NewEnemy(NORMAL)
+		}
+	case DUNGEON:
+		switch {
+		case .025 > chanceNeeded:
+			r.enemies[0] = NewEnemy(PEON)
+		case .025+.025 > chanceNeeded:
+			r.enemies[0] = NewEnemy(PEON)
+			r.enemies[1] = NewEnemy(PEON)
+		case .025+.025+.05 > chanceNeeded:
+			r.enemies[0] = NewEnemy(NORMAL)
+		case .025+.025+.05+.15 > chanceNeeded:
+			r.enemies[0] = NewEnemy(NORMAL)
+			r.enemies[1] = NewEnemy(NORMAL)
+		case .025+.025+.05+.15+.65 > chanceNeeded:
+			r.enemies[0] = NewEnemy(BRUTE)
+		case .025+.025+.05+.15+.65+.1 > chanceNeeded:
+			r.enemies[0] = NewEnemy(BRUTE)
+			r.enemies[1] = NewEnemy(BRUTE)
+		}
+	case CHEST:
+		switch {
+		case .4 > chanceNeeded:
+			return
+		case .4+.4 > chanceNeeded:
+			r.enemies[0] = NewEnemy(NORMAL)
+		case .4+.4+.2 > chanceNeeded:
+			r.enemies[0] = NewEnemy(BRUTE)
+		}
+	case MYSTIC:
+		switch {
+		case .3 > chanceNeeded:
+			return
+		case .3+.2 > chanceNeeded:
+			r.enemies[0] = NewEnemy(NORMAL)
+		case .3+.2+.25 > chanceNeeded:
+			r.enemies[0] = NewEnemy(E_MYSTIC)
+		case .3+.2+.25+.25 > chanceNeeded:
+			r.enemies[0] = NewEnemy(E_MYSTIC)
+			r.enemies[1] = NewEnemy(E_MYSTIC)
+		}
+	default:
+		// also impossible but...
+		return
+
+	}
+}
+
 func (r *Room) initDoors(up Door, do Door, le Door, ri Door) {
 	if DEBUG_MODE {
 		fmt.Println("init doors ", r.loc.x, r.loc.y, up, do, le, ri)
@@ -168,6 +246,16 @@ func (r *Room) initDoors(up Door, do Door, le Door, ri Door) {
 	if DEBUG_MODE {
 		fmt.Println("post init doors", r.dUp, r.dDown, r.dLeft, r.dRight)
 	}
+}
+
+func (r *Room) getNumEnemies() int {
+	num := 0
+	for _, val := range r.enemies {
+		if val != nil {
+			num++
+		}
+	}
+	return num
 }
 
 func (r *Room) getNumChests() int {

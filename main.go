@@ -52,6 +52,7 @@ func main() {
 	game.initDefaultRoomType()
 	game.initRooms()
 	game.initRoomChests()
+	game.initEnemies()
 	game.calcStats()
 	if DEBUG_MODE {
 		printRooms(game)
@@ -243,6 +244,30 @@ func (game *Game) initRoomChests() {
 	}
 }
 
+func (game *Game) initEnemies() {
+	for r := int64(1); r <= GameRaidus; r++ {
+		for t := int64(0); t < r*8; t++ {
+			var x int64
+			var y int64
+			if t < 2*r {
+				x = GameRaidus - r + t
+				y = GameRaidus - r
+			} else if t < 4*r {
+				x = GameRaidus + r
+				y = GameRaidus - (3 * r) + t
+			} else if t < 6*r {
+				x = GameRaidus + (5 * r) - t
+				y = GameRaidus + r
+			} else {
+				x = GameRaidus - r
+				y = GameRaidus + (7 * r) - t
+			}
+
+			game.rooms[y][x].initEnemies(x, y, r)
+		}
+	}
+}
+
 func (game *Game) initRoomTypeChances() {
 	game.chances = make(map[RoomType]float64, MYSTIC+1)
 	game.chances[START] = 0
@@ -293,7 +318,8 @@ func (game *Game) calcStats() {
 	total := GameWidth * GameHeight
 	s, h, g, d, c, m := 0, 0, 0, 0, 0, 0
 	chests, lChests := 0, 0
-	rWch, rTot := 0, 0
+	rWch, rWe, rTot := 0, 0, 0
+	ep, en, eb, em, et := 0, 0, 0, 0, 0
 	// items, each new time on new line, each diff effective type new var
 	itemTotal := 0
 	k1, k2, k3, kT := 0, 0, 0, 0
@@ -375,6 +401,27 @@ func (game *Game) calcStats() {
 					}
 				}
 			}
+
+			if current.getNumEnemies() > 0 {
+				rWe++
+				et += current.getNumEnemies()
+				for _, val := range current.enemies {
+					if val == nil {
+						continue
+					}
+					switch val.eType {
+					case PEON:
+						ep++
+					case NORMAL:
+						en++
+					case BRUTE:
+						eb++
+					case E_MYSTIC:
+						em++
+					}
+				}
+			}
+
 			switch current.rType {
 			case START:
 				s++
@@ -400,6 +447,12 @@ func (game *Game) calcStats() {
 	fmt.Printf("DUNGEON      %6d/%-7d = %9.6f%%\n", d, total, (float64(d) / float64(total) * 100.0))
 	fmt.Printf("CHEST        %6d/%-7d = %9.6f%%\n", c, total, (float64(c) / float64(total) * 100.0))
 	fmt.Printf("MYSTIC       %6d/%-7d = %9.6f%%\n", m, total, (float64(m) / float64(total) * 100.0))
+	fmt.Println("---------------------ENEMY---------------------")
+	fmt.Printf("RWE/RTot     %6d/%-7d = %9.6f%%\n", rWe, rTot, (float64(rWe) / float64(rTot) * 100.0))
+	fmt.Printf("PEON         %6d/%-7d = %9.6f%%\n", ep, et, (float64(ep) / float64(et) * 100.0))
+	fmt.Printf("NORMAL       %6d/%-7d = %9.6f%%\n", en, et, (float64(en) / float64(et) * 100.0))
+	fmt.Printf("BRUTE        %6d/%-7d = %9.6f%%\n", eb, et, (float64(eb) / float64(et) * 100.0))
+	fmt.Printf("MYSTIC       %6d/%-7d = %9.6f%%\n", em, et, (float64(em) / float64(et) * 100.0))
 	fmt.Println("---------------------CHEST---------------------")
 	fmt.Printf("RWC/RTot     %6d/%-7d = %9.6f%%\n", rWch, rTot, (float64(rWch) / float64(rTot) * 100.0))
 	fmt.Printf("Locked/Total %6d/%-7d = %9.6f%%\n", lChests, chests, (float64(lChests) / float64(chests) * 100.0))
