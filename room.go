@@ -248,6 +248,15 @@ func (r *Room) initDoors(up Door, do Door, le Door, ri Door) {
 	}
 }
 
+func (r *Room) getCurrentEnemy() *Enemy {
+	for _, enemy := range r.enemies {
+		if enemy != nil && enemy.health >= 0 {
+			return enemy
+		}
+	}
+	return nil
+}
+
 func (r *Room) getNumEnemies() int {
 	num := 0
 	for _, val := range r.enemies {
