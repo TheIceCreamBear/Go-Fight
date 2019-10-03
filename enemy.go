@@ -17,9 +17,10 @@ const (
 )
 
 type Enemy struct {
-	eType    EnemyType
-	health   float64
-	strength float64
+	eType       EnemyType
+	health      float64
+	strength    float64
+	turnCounter int
 }
 
 func NewEnemy(eType EnemyType) *Enemy {
@@ -39,6 +40,7 @@ func NewEnemy(eType EnemyType) *Enemy {
 		e.health = 50
 		e.strength = 1.5
 	}
+	e.turnCounter = 1
 	return e
 }
 
