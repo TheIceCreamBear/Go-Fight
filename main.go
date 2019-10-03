@@ -12,6 +12,7 @@ import (
 type Game struct {
 	rooms   [GameRaidus*2 + 1][GameRaidus*2 + 1]Room
 	chances map[RoomType]float64
+	moves   []*Move
 }
 
 // directions
@@ -53,6 +54,7 @@ func main() {
 	game.initRooms()
 	game.initRoomChests()
 	game.initEnemies()
+	game.initMoves()
 	game.calcStats()
 	if DEBUG_MODE {
 		printRooms(game)
@@ -61,7 +63,7 @@ func main() {
 	var playerStartX = GameRaidus
 	var playerStartY = GameRaidus
 
-	plyr := NewPlayer(&game.rooms[playerStartY][playerStartX], &Location{playerStartX, playerStartY})
+	plyr := NewPlayer(&game.rooms[playerStartY][playerStartX], &Location{playerStartX, playerStartY}, game.moves[:3])
 
 	for {
 		run := plyr.update()
@@ -70,6 +72,9 @@ func main() {
 		}
 		if plyr.movedLast {
 			plyr.currentRoom = &game.rooms[plyr.loc.y][plyr.loc.x]
+			if plyr.currentRoom.getNumEnemies() > 0 {
+				fmt.Println("\n\nYou have Encountered an Enemy!\nPrepare to Fight!")
+			}
 		}
 	}
 }
@@ -276,6 +281,13 @@ func (game *Game) initRoomTypeChances() {
 	game.chances[DUNGEON] = 0.15
 	game.chances[CHEST] = 0.1
 	game.chances[MYSTIC] = 0.05
+}
+
+func (game *Game) initMoves() {
+	game.moves = make([]*Move, 3)
+	game.moves[0] = NewMove(3.0, 6.0, "Punch")
+	game.moves[1] = NewMove(5.0, 10.0, "Kick")
+	game.moves[2] = NewMove(9.0, 15.0, "Special")
 }
 
 func (game *Game) initDefaultRoomType() {

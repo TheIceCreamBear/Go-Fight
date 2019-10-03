@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	BasePlayerHealth   = 100.0
@@ -8,21 +10,53 @@ const (
 	BasePlayerDefense  = 1.0
 )
 
+type PlayerState int8
+
+const (
+	Exploring PlayerState = iota
+	Fighting  PlayerState = iota
+)
+
+type Move struct {
+	id        uint8 // For future features, including saving.
+	minDamage float64
+	maxDamage float64
+	name      string
+
+	// TODO Cooldowns
+}
+
+var moveIdCounter uint8
+
+func NewMove(min, max float64, name string) *Move {
+	m := new(Move)
+	m.id = moveIdCounter
+	moveIdCounter++
+	m.minDamage = min
+	m.maxDamage = max
+	m.name = name
+	return m
+}
+
 type Player struct {
+	state       PlayerState
 	movedLast   bool
 	loc         *Location
 	currentRoom *Room
 	inventory   *Inventory
+	moves       []*Move
 	health      float64
 	defense     float64 // enemyDamage = 1 / defense
 	strength    float64 // playerDamage = (min + rand.Int64N(max - min)) * strength
 }
 
-func NewPlayer(current *Room, loc *Location) *Player {
+func NewPlayer(current *Room, loc *Location, moves []*Move) *Player {
 	p := new(Player)
-	p.currentRoom = current
+	p.state = Exploring
 	p.loc = loc
+	p.currentRoom = current
 	p.inventory = NewInventory()
+	p.moves = moves
 	p.health = BasePlayerHealth
 	p.defense = 1.0
 	p.strength = 1.0
@@ -32,9 +66,24 @@ func NewPlayer(current *Room, loc *Location) *Player {
 func (p *Player) update() bool {
 	// var reset
 	p.movedLast = false
+	if p.currentRoom.getNumEnemies() > 0 {
+		p.state = Fighting
+	}
 
-	// player turn
-	run := p.printChoices()
+	// Player turn
+	var run bool
+	if p.state == Exploring {
+		run = p.printChoices()
+	} else if p.state == Fighting {
+		run = p.printFightingChoices()
+
+		// Enemy turn
+		// TODO
+	} else {
+		// IMPOSSIBLE CASE - Try and reset and recover
+		p.state = Exploring
+		run = true
+	}
 
 	return run
 }
@@ -177,6 +226,11 @@ func (p *Player) printRoomOptions() {
 	} else {
 		fmt.Println("You can come back to loot the chests at any time")
 	}
+}
+
+func (p *Player) printFightingChoices() bool {
+	// temp
+	return true
 }
 
 func (p *Player) printPlayerStats() {
