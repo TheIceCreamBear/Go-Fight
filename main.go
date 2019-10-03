@@ -424,7 +424,7 @@ func (game *Game) calcStats() {
 					switch val.eType {
 					case PEON:
 						ep++
-					case NORMAL:
+					case WARRIOR:
 						en++
 					case BRUTE:
 						eb++

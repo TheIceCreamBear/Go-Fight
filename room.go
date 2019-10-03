@@ -178,7 +178,7 @@ func (r *Room) initEnemies(x, y, raid int64) {
 		case .7+.25 > chanceNeeded:
 			r.enemies[0] = NewEnemy(PEON)
 		case .7+.25+.05 > chanceNeeded:
-			r.enemies[0] = NewEnemy(NORMAL)
+			r.enemies[0] = NewEnemy(WARRIOR)
 		}
 	case GREAT_HALL:
 		switch {
@@ -187,7 +187,7 @@ func (r *Room) initEnemies(x, y, raid int64) {
 		case .6+.1 > chanceNeeded:
 			r.enemies[0] = NewEnemy(PEON)
 		case .6+.1+.3 > chanceNeeded:
-			r.enemies[0] = NewEnemy(NORMAL)
+			r.enemies[0] = NewEnemy(WARRIOR)
 		}
 	case DUNGEON:
 		switch {
@@ -197,10 +197,10 @@ func (r *Room) initEnemies(x, y, raid int64) {
 			r.enemies[0] = NewEnemy(PEON)
 			r.enemies[1] = NewEnemy(PEON)
 		case .025+.025+.05 > chanceNeeded:
-			r.enemies[0] = NewEnemy(NORMAL)
+			r.enemies[0] = NewEnemy(WARRIOR)
 		case .025+.025+.05+.15 > chanceNeeded:
-			r.enemies[0] = NewEnemy(NORMAL)
-			r.enemies[1] = NewEnemy(NORMAL)
+			r.enemies[0] = NewEnemy(WARRIOR)
+			r.enemies[1] = NewEnemy(WARRIOR)
 		case .025+.025+.05+.15+.65 > chanceNeeded:
 			r.enemies[0] = NewEnemy(BRUTE)
 		case .025+.025+.05+.15+.65+.1 > chanceNeeded:
@@ -212,7 +212,7 @@ func (r *Room) initEnemies(x, y, raid int64) {
 		case .4 > chanceNeeded:
 			return
 		case .4+.4 > chanceNeeded:
-			r.enemies[0] = NewEnemy(NORMAL)
+			r.enemies[0] = NewEnemy(WARRIOR)
 		case .4+.4+.2 > chanceNeeded:
 			r.enemies[0] = NewEnemy(BRUTE)
 		}
@@ -221,7 +221,7 @@ func (r *Room) initEnemies(x, y, raid int64) {
 		case .3 > chanceNeeded:
 			return
 		case .3+.2 > chanceNeeded:
-			r.enemies[0] = NewEnemy(NORMAL)
+			r.enemies[0] = NewEnemy(WARRIOR)
 		case .3+.2+.25 > chanceNeeded:
 			r.enemies[0] = NewEnemy(E_MYSTIC)
 		case .3+.2+.25+.25 > chanceNeeded:
