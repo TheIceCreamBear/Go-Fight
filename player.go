@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 const (
@@ -66,7 +67,7 @@ func NewPlayer(current *Room, loc *Location, moves []*Move) *Player {
 func (p *Player) update() bool {
 	// var reset
 	p.movedLast = false
-	if p.currentRoom.getNumEnemies() > 0 {
+	if p.currentRoom.getNumEnemiesAlive() > 0 {
 		p.state = Fighting
 	}
 
@@ -78,7 +79,20 @@ func (p *Player) update() bool {
 		run = p.printFightingChoices()
 
 		// Enemy turn
-		// TODO
+		if run && p.currentRoom.getCurrentEnemy() != nil {
+			// Balance me
+			damage := p.currentRoom.getCurrentEnemy().getDamageFromAttack() - p.defense
+
+			fmt.Printf("The %s attacked and did %.2f damage.\n", getEnemyNameFromType(p.currentRoom.getCurrentEnemy().eType), damage)
+			p.health -= damage - p.defense
+		}
+
+		if p.health <= 0 {
+			fmt.Println("It appears that the enemy killed you.")
+			return false
+		} else {
+			return true
+		}
 	} else {
 		// IMPOSSIBLE CASE - Try and reset and recover
 		p.state = Exploring
@@ -229,7 +243,66 @@ func (p *Player) printRoomOptions() {
 }
 
 func (p *Player) printFightingChoices() bool {
-	// temp
+	enemy := p.currentRoom.getCurrentEnemy()
+	if enemy == nil {
+		p.state = Exploring
+		return true
+	}
+
+	var choice int8
+	done := false
+	for !done {
+		// TODO
+		fmt.Println("\nIt's turn", enemy.turnCounter)
+		enemy.turnCounter++
+		fmt.Printf("Your Health : %6.2f\n", p.health)
+		fmt.Printf("Enemy Health: %6.2f    Enemy type: %s\n", enemy.health, getEnemyNameFromType(enemy.eType))
+
+		var index int
+		var move *Move
+		fmt.Println("Moves:")
+		for index, move = range p.moves {
+			fmt.Printf("  %2d: %-15s %6.2f -%6.2f Damage\n", index, move.name, move.minDamage, move.maxDamage)
+		}
+		fmt.Println("Other options:")
+		index++
+		fmt.Printf("  %2d: Inventory\n", index)
+		index++
+		fmt.Printf("  %2d: Run Away (NOT IMPLEMENTED!!!)\n", index)
+
+		_, err := fmt.Scanln(&choice)
+		if err != nil {
+			fmt.Println("An error occured while reading your choice in, please try again: ", err)
+			continue
+		}
+
+		if choice == cheatInputNumber {
+			p.doCheatLoop()
+		} else if choice >= 0 && int(choice) < len(p.moves) {
+			move = p.moves[choice]
+
+			min, max := move.minDamage, move.maxDamage
+			damage := min + rand.Float64()*(max-min)
+
+			fmt.Printf("\nYour %s did %.2f damage.\n", move.name, damage)
+			enemy.health -= damage
+			if enemy.health <= 0.0 {
+				fmt.Println("You defeated the", getEnemyNameFromType(enemy.eType))
+				p.state = Exploring
+			}
+			return true
+		} else if int(choice) == index-1 {
+			done = p.printInventoryChoices()
+			continue
+		} else if int(choice) == index {
+			fmt.Println("This is not yet implemented, your turn is not consumed.")
+			// this is where run away would be implemented
+		} else {
+			fmt.Println("Invalid Input, try again")
+			done = false
+			continue
+		}
+	}
 	return true
 }
 
