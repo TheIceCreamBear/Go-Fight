@@ -267,6 +267,16 @@ func (r *Room) getNumEnemies() int {
 	return num
 }
 
+func (r *Room) getNumEnemiesAlive() int {
+	num := 0
+	for _, val := range r.enemies {
+		if val != nil && val.health >= 0 {
+			num++
+		}
+	}
+	return num
+}
+
 func (r *Room) getNumChests() int {
 	numChests := 0
 	for _, val := range r.chests {
