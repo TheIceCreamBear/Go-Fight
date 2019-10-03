@@ -6,7 +6,7 @@ type EnemyType int8
 
 const (
 	PEON     EnemyType = iota
-	NORMAL   EnemyType = iota
+	WARRIOR  EnemyType = iota
 	BRUTE    EnemyType = iota
 	E_MYSTIC EnemyType = iota
 )
@@ -30,7 +30,7 @@ func NewEnemy(eType EnemyType) *Enemy {
 	case PEON:
 		e.health = 75
 		e.strength = 0.75
-	case NORMAL:
+	case WARRIOR:
 		e.health = 100
 		e.strength = 1.0
 	case BRUTE:
@@ -53,8 +53,8 @@ func getEnemyNameFromType(eType EnemyType) string {
 	switch eType {
 	case PEON:
 		return "Peon"
-	case NORMAL:
-		return "Normal"
+	case WARRIOR:
+		return "Warrior"
 	case BRUTE:
 		return "Brute"
 	case E_MYSTIC:
