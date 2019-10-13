@@ -251,10 +251,10 @@ func (p *Player) printFightingChoices() bool {
 
 	var choice int8
 	done := false
+	enemy.turnCounter++
 	for !done {
 		// TODO
 		fmt.Println("\nIt's turn", enemy.turnCounter)
-		enemy.turnCounter++
 		fmt.Printf("Your Health : %6.2f\n", p.health)
 		fmt.Printf("Enemy Health: %6.2f    Enemy type: %s\n", enemy.health, getEnemyNameFromType(enemy.eType))
 
@@ -273,6 +273,7 @@ func (p *Player) printFightingChoices() bool {
 		_, err := fmt.Scanln(&choice)
 		if err != nil {
 			fmt.Println("An error occured while reading your choice in, please try again: ", err)
+			fmt.Println("Your turn was not consumed.")
 			continue
 		}
 
@@ -295,10 +296,11 @@ func (p *Player) printFightingChoices() bool {
 			done = p.printInventoryChoices()
 			continue
 		} else if int(choice) == index {
-			fmt.Println("This is not yet implemented, your turn is not consumed.")
+			fmt.Println("This is not yet implemented, your turn was not consumed.")
 			// this is where run away would be implemented
 		} else {
 			fmt.Println("Invalid Input, try again")
+			fmt.Println("Your turn was not consumed.")
 			done = false
 			continue
 		}

@@ -40,7 +40,7 @@ func NewEnemy(eType EnemyType) *Enemy {
 		e.health = 50
 		e.strength = 1.5
 	}
-	e.turnCounter = 1
+	e.turnCounter = 0
 	return e
 }
 
