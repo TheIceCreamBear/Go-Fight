@@ -63,7 +63,7 @@ func main() {
 	var playerStartX = GameRaidus
 	var playerStartY = GameRaidus
 
-	plyr := NewPlayer(&game.rooms[playerStartY][playerStartX], &Location{playerStartX, playerStartY}, game.moves[:3])
+	plyr := newPlayer(&game.rooms[playerStartY][playerStartX], &Location{playerStartX, playerStartY}, game.moves[:3])
 
 	for {
 		run := plyr.update()
@@ -285,9 +285,9 @@ func (game *Game) initRoomTypeChances() {
 
 func (game *Game) initMoves() {
 	game.moves = make([]*Move, 3)
-	game.moves[0] = NewMove(3.0, 6.0, "Punch")
-	game.moves[1] = NewMove(5.0, 10.0, "Kick")
-	game.moves[2] = NewMove(9.0, 15.0, "Special")
+	game.moves[0] = newMove(3.0, 6.0, "Punch", 0)
+	game.moves[1] = newMove(5.0, 10.0, "Kick", 0)
+	game.moves[2] = newMove(9.0, 15.0, "Special", 3)
 }
 
 func (game *Game) initDefaultRoomType() {

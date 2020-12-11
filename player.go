@@ -19,23 +19,25 @@ const (
 )
 
 type Move struct {
-	id        uint8 // For future features, including saving.
-	minDamage float64
-	maxDamage float64
-	name      string
-
+	id          uint8 // For future features, including saving.
+	minDamage   float64
+	maxDamage   float64
+	name        string
+	cooldown    int32
+	maxCooldown int32
 	// TODO Cooldowns
 }
 
 var moveIdCounter uint8
 
-func NewMove(min, max float64, name string) *Move {
+func newMove(min, max float64, name string, cooldown int32) *Move {
 	m := new(Move)
 	m.id = moveIdCounter
 	moveIdCounter++
 	m.minDamage = min
 	m.maxDamage = max
 	m.name = name
+	m.maxCooldown = cooldown
 	return m
 }
 
@@ -51,7 +53,7 @@ type Player struct {
 	strength    float64 // playerDamage = (min + rand.Int64N(max - min)) * strength
 }
 
-func NewPlayer(current *Room, loc *Location, moves []*Move) *Player {
+func newPlayer(current *Room, loc *Location, moves []*Move) *Player {
 	p := new(Player)
 	p.state = Exploring
 	p.loc = loc
@@ -90,9 +92,8 @@ func (p *Player) update() bool {
 		if p.health <= 0 {
 			fmt.Println("It appears that the enemy killed you.")
 			return false
-		} else {
-			return true
 		}
+		return true
 	} else {
 		// IMPOSSIBLE CASE - Try and reset and recover
 		p.state = Exploring
@@ -262,7 +263,15 @@ func (p *Player) printFightingChoices() bool {
 		var move *Move
 		fmt.Println("Moves:")
 		for index, move = range p.moves {
-			fmt.Printf("  %2d: %-15s %6.2f -%6.2f Damage\n", index, move.name, move.minDamage, move.maxDamage)
+			if move.cooldown > 0 {
+				fmt.Printf("  %2d: %-15s On %d turn cooldown\n", index, move.name, move.cooldown)
+			} else {
+				if move.maxCooldown > 0 {
+					fmt.Printf("  %2d: %-15s %6.2f -%6.2f Damage (Has Cooldown: %d Turns)\n", index, move.name, move.minDamage, move.maxDamage, move.maxCooldown)
+				} else {
+					fmt.Printf("  %2d: %-15s %6.2f -%6.2f Damage\n", index, move.name, move.minDamage, move.maxDamage)
+				}
+			}
 		}
 		fmt.Println("Other options:")
 		index++
@@ -282,14 +291,36 @@ func (p *Player) printFightingChoices() bool {
 		} else if choice >= 0 && int(choice) < len(p.moves) {
 			move = p.moves[choice]
 
+			if move.cooldown > 0 {
+				fmt.Printf("Move %-15s is on %d turn cooldown\n", move.name, move.cooldown)
+				continue
+			}
+
 			min, max := move.minDamage, move.maxDamage
 			damage := min + rand.Float64()*(max-min)
 
 			fmt.Printf("\nYour %s did %.2f damage.\n", move.name, damage)
 			enemy.health -= damage
+
+			for _, temp := range p.moves {
+				if temp.cooldown > 0 {
+					temp.cooldown--
+				}
+			}
+
+			if move.maxCooldown > 0 {
+				move.cooldown = move.maxCooldown
+			}
+
 			if enemy.health <= 0.0 {
 				fmt.Println("You defeated the", getEnemyNameFromType(enemy.eType))
 				p.state = Exploring
+
+				for _, temp := range p.moves {
+					if temp.cooldown > 0 {
+						temp.cooldown = 0
+					}
+				}
 			}
 			return true
 		} else if int(choice) == index-1 {
