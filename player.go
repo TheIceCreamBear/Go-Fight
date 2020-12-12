@@ -48,12 +48,13 @@ type Player struct {
 	currentRoom *Room
 	inventory   *Inventory
 	moves       []*Move
+	game        *Game
 	health      float64
 	defense     float64 // enemyDamage = 1 / defense
 	strength    float64 // playerDamage = (min + rand.Int64N(max - min)) * strength
 }
 
-func newPlayer(current *Room, loc *Location, moves []*Move) *Player {
+func newPlayer(current *Room, loc *Location, moves []*Move, game *Game) *Player {
 	p := new(Player)
 	p.state = Exploring
 	p.loc = loc
@@ -63,6 +64,7 @@ func newPlayer(current *Room, loc *Location, moves []*Move) *Player {
 	p.health = BasePlayerHealth
 	p.defense = 1.0
 	p.strength = 1.0
+	p.game = game
 	return p
 }
 
@@ -329,6 +331,106 @@ func (p *Player) printFightingChoices() bool {
 		} else if int(choice) == index {
 			fmt.Println("This is not yet implemented, your turn was not consumed.")
 			// this is where run away would be implemented
+			valid := false
+			for !valid {
+				fmt.Println("Where would you like to run to?")
+				if p.currentRoom.canLeaveFrom(UP) {
+					fmt.Println("1. UP")
+				}
+				if p.currentRoom.canLeaveFrom(DOWN) {
+					fmt.Println("2. DOWN")
+				}
+				if p.currentRoom.canLeaveFrom(LEFT) {
+					fmt.Println("3. LEFT")
+				}
+				if p.currentRoom.canLeaveFrom(RIGHT) {
+					fmt.Println("4. RIGHT")
+				}
+				fmt.Println("5. Cancel")
+
+				_, err := fmt.Scanln(&choice)
+				if err != nil {
+					fmt.Println("An error occured while reading your choice in, please try again: ", err)
+					continue
+				}
+
+				// TODO generate some chance of failing based on the adjacent room type
+				// TODO generate a change of successfully leaving and successfully going to the destination
+				// call a canRunFrom function and a canRunTo function on the source and destination room
+				// and if both are true do it
+				// this will always consume the player's turn
+
+				from := rand.Float64()
+				to := rand.Float64()
+				var canLeave bool
+				var destRoom *Room
+
+				choice-- // due to directions being index 0 based and prints being index 1 based
+				dir := Direction(choice)
+				if p.currentRoom.canLeaveFrom(dir) {
+					switch dir {
+					case UP:
+						destRoom = &p.game.rooms[p.loc.y][p.loc.x-1]
+						canLeave = p.currentRoom.canRunFrom(from) && destRoom.canRunTo(to)
+						if !canLeave {
+							fmt.Println("\nCouldnt get away!")
+							return true
+						}
+						p.loc.add(&Location{0, -1})
+						if DEBUG_MODE {
+							fmt.Println("UP")
+						}
+						valid = true
+					case DOWN:
+						destRoom = &p.game.rooms[p.loc.y][p.loc.x+1]
+						canLeave = p.currentRoom.canRunFrom(from) && destRoom.canRunTo(to)
+						if !canLeave {
+							fmt.Println("\nCouldnt get away!")
+							return true
+						}
+						p.loc.add(&Location{0, 1})
+						if DEBUG_MODE {
+							fmt.Println("DOWN")
+						}
+						valid = true
+					case LEFT:
+						destRoom = &p.game.rooms[p.loc.y-1][p.loc.x]
+						canLeave = p.currentRoom.canRunFrom(from) && destRoom.canRunTo(to)
+						if !canLeave {
+							fmt.Println("\nCouldnt get away!")
+							return true
+						}
+						p.loc.add(&Location{-1, 0})
+						if DEBUG_MODE {
+							fmt.Println("LEFT")
+						}
+						valid = true
+					case RIGHT:
+						destRoom = &p.game.rooms[p.loc.y+1][p.loc.x]
+						canLeave = p.currentRoom.canRunFrom(from) && destRoom.canRunTo(to)
+						if !canLeave {
+							fmt.Println("\nCouldnt get away!")
+							return true
+						}
+						p.loc.add(&Location{1, 0})
+						if DEBUG_MODE {
+							fmt.Println("RIGHT")
+						}
+						valid = true
+					default:
+						fmt.Println("Invalid Input, try again")
+					}
+
+					fmt.Println("Got away safely")
+					p.movedLast = true
+					return true
+				}
+				if choice == 4 {
+					valid = true
+					break
+				}
+				fmt.Println("Invalid Input, try again")
+			}
 		} else {
 			fmt.Println("Invalid Input, try again")
 			fmt.Println("Your turn was not consumed.")

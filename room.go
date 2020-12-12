@@ -68,6 +68,48 @@ func (r *Room) canLeaveFrom(direction Direction) bool {
 	}
 }
 
+func (r *Room) canRunFrom(chance float64) bool {
+	switch r.rType {
+	case START:
+		// should not have to call this but what ever
+		return true
+	case HALLWAY:
+		return chance < .7
+	case GREAT_HALL:
+		return chance < .6
+	case DUNGEON:
+		return chance < .2
+	case CHEST:
+		return chance < .4
+	case MYSTIC:
+		return chance < .3
+	default:
+		fmt.Println("D E F A U L T  C A S E ")
+		return false
+	}
+}
+
+func (r *Room) canRunTo(chance float64) bool {
+	switch r.rType {
+	case START:
+		// should not have to call this but what ever
+		return true
+	case HALLWAY:
+		return chance < 1
+	case GREAT_HALL:
+		return chance < .9
+	case DUNGEON:
+		return chance < .3
+	case CHEST:
+		return chance < .7
+	case MYSTIC:
+		return chance < .6
+	default:
+		fmt.Println("D E F A U L T  C A S E ")
+		return false
+	}
+}
+
 func (r *Room) initChests() {
 	r.chests = make([]*Chest, 3)
 	var numChests int

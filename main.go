@@ -63,7 +63,7 @@ func main() {
 	var playerStartX = GameRaidus
 	var playerStartY = GameRaidus
 
-	plyr := newPlayer(&game.rooms[playerStartY][playerStartX], &Location{playerStartX, playerStartY}, game.moves[:3])
+	plyr := newPlayer(&game.rooms[playerStartY][playerStartX], &Location{playerStartX, playerStartY}, game.moves[:3], game)
 
 	for {
 		run := plyr.update()
