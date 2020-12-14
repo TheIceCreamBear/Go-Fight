@@ -279,7 +279,7 @@ func (p *Player) printFightingChoices() bool {
 		index++
 		fmt.Printf("  %2d: Inventory\n", index)
 		index++
-		fmt.Printf("  %2d: Run Away (NOT IMPLEMENTED!!!)\n", index)
+		fmt.Printf("  %2d: Run Away\n", index)
 
 		_, err := fmt.Scanln(&choice)
 		if err != nil {
@@ -329,8 +329,6 @@ func (p *Player) printFightingChoices() bool {
 			done = p.printInventoryChoices()
 			continue
 		} else if int(choice) == index {
-			fmt.Println("This is not yet implemented, your turn was not consumed.")
-			// this is where run away would be implemented
 			valid := false
 			for !valid {
 				fmt.Println("Where would you like to run to?")
@@ -353,12 +351,6 @@ func (p *Player) printFightingChoices() bool {
 					fmt.Println("An error occured while reading your choice in, please try again: ", err)
 					continue
 				}
-
-				// TODO generate some chance of failing based on the adjacent room type
-				// TODO generate a change of successfully leaving and successfully going to the destination
-				// call a canRunFrom function and a canRunTo function on the source and destination room
-				// and if both are true do it
-				// this will always consume the player's turn
 
 				from := rand.Float64()
 				to := rand.Float64()
